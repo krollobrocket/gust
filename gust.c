@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 #include <curl/curl.h>
 
 void help() {
   printf("Syntax: gust [-n COUNT] [-i INTERVAL] [-v] URL\n");
   printf("-n COUNT\tNumber of times to test URL\n");
   printf("-i INTERVAL\tTime between calls\n");
+  printf("-x VERB\tHttp method\n");
   printf("-v\t\tDisplay verbose output\n");
 }
 
@@ -21,9 +23,11 @@ int main(int argc, char** argv) {
     int head = 0;
     int count = -1;
     int interval = 0;
+    char* method = "GET";
     char* url = "";
+    char* data = 0;
 
-    while((opt = getopt(argc, argv, "n:i:vh")) != -1)
+    while((opt = getopt(argc, argv, "n:i:x:vh")) != -1)
     {
         switch(opt)
         {
@@ -35,6 +39,10 @@ int main(int argc, char** argv) {
                 if (count == 0) {
                   count = -1;
                 }
+                break;
+            case 'x':
+                // Check so this is a valid verb.
+                method = optarg;
                 break;
             case 'i':
                 interval = atoi(optarg);
@@ -59,6 +67,9 @@ int main(int argc, char** argv) {
     CURL* ch = curl_easy_init();
     curl_easy_setopt(ch, CURLOPT_URL, url);
     curl_easy_setopt(ch, CURLOPT_VERBOSE, verbose);
+    if (strcmp((const char*)method, "POST") == 0) {
+        curl_easy_setopt(ch, CURLOPT_POST, 1);
+    }
     //curl_easy_setopt(ch, CURLOPT_HEADER, head);
     //curl_easy_setopt(ch, CURLOPT_NOBODY, head);
     //curl_easy_setopt(ch, CURLOPT_HEADERFUNCTION, read_header);
