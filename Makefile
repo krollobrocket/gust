@@ -1,5 +1,5 @@
-gust: gust.o
+gust: gust.c
 	${CC} -o $@ ${CCFLAGS} $? -lcurl
 
 clean:
-	rm -rf gust *.o
+	rm -rf gust
