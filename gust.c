@@ -28,6 +28,9 @@ int valid_url(const char* url) {
 }
 
 int main(int argc, char** argv) {
+    CURL* ch;
+    CURLcode code;
+    CURLINFO info;
     int opt = 0;
     int verbose = 0;
     int head = 0;
@@ -80,7 +83,7 @@ int main(int argc, char** argv) {
         exit(EXIT_FAILURE);
     }
 
-    CURL* ch = curl_easy_init();
+    ch = curl_easy_init();
     curl_easy_setopt(ch, CURLOPT_URL, url);
     curl_easy_setopt(ch, CURLOPT_VERBOSE, verbose);
     curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, DEFAULT_TIMEOUT_MS);
@@ -91,10 +94,7 @@ int main(int argc, char** argv) {
         curl_easy_setopt(ch, CURLOPT_NOBODY, 1);
         curl_easy_setopt(ch, CURLOPT_HEADER, 1);
     }
-    //curl_easy_setopt(ch, CURLOPT_HEADERFUNCTION, read_header);
 
-    CURLcode code;
-    CURLINFO info;
     do {
         code = curl_easy_perform(ch);
         if (code != CURLE_OK) {
