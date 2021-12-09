@@ -7,6 +7,18 @@
 #define DEFAULT_INTERVAL 500
 #define DEFAULT_TIMEOUT_MS 5000
 
+#define str(x) #x
+#define xstr(x) str(x)
+
+enum VERBS {
+    GET,
+    DELETE,
+    OPTIONS,
+    PATCH,
+    POST,
+    PUT
+};
+
 void help() {
   printf("Syntax: gust [-n COUNT] [-i INTERVAL] [-v] URL\n");
   printf("-n COUNT\tNumber of times to test URL\n");
@@ -87,10 +99,10 @@ int main(int argc, char** argv) {
     curl_easy_setopt(ch, CURLOPT_URL, url);
     curl_easy_setopt(ch, CURLOPT_VERBOSE, verbose);
     curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, DEFAULT_TIMEOUT_MS);
-    if (strcmp((const char*)method, "POST") == 0) {
+    if (strcmp(xstr(POST), method) == 0) {
         curl_easy_setopt(ch, CURLOPT_POST, 1);
     }
-    if (strcmp((const char*)method, "HEAD") == 0) {
+    if (strcmp(xstr(HEAD), method) == 0) {
         curl_easy_setopt(ch, CURLOPT_NOBODY, 1);
         curl_easy_setopt(ch, CURLOPT_HEADER, 1);
     }

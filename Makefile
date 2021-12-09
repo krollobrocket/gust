@@ -1,5 +1,5 @@
 gust: gust.c
-	${CC} -o $@ ${CCFLAGS} $? -lcurl
+	${CC} -o $@ -std=c99 ${CCFLAGS} $? -lcurl
 
 clean:
 	rm -rf gust
