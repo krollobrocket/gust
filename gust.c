@@ -7,8 +7,7 @@
 #define DEFAULT_INTERVAL 500
 #define DEFAULT_TIMEOUT_MS 5000
 
-#define str(x) #x
-#define xstr(x) str(x)
+#define xstr(x) #x
 
 enum VERBS {
     GET,
@@ -24,6 +23,8 @@ void help() {
   printf("-n COUNT\tNumber of times to test URL\n");
   printf("-i INTERVAL\tTime between calls\n");
   printf("-x VERB\tHttp method\n");
+  printf("-f Follow location\n");
+  printf("-q Quite mode\n");
   printf("-v\t\tDisplay verbose output\n");
 }
 
@@ -46,18 +47,26 @@ int main(int argc, char** argv) {
     int opt = 0;
     int verbose = 0;
     int head = 0;
+    int follow = 0;
+    int quiet = 0;
     int count = -1;
     int interval = DEFAULT_INTERVAL;
     char* method = "GET";
     char* url = "";
     char* data = 0;
 
-    while((opt = getopt(argc, argv, "n:i:x:vh")) != -1)
+    while((opt = getopt(argc, argv, "n:i:x:vhfq")) != -1)
     {
         switch(opt)
         {
             case 'h':
                 head = 1;
+                break;
+            case 'f':
+                follow = 1;
+                break;
+            case 'q':
+                quiet = 1;
                 break;
             case 'n':
                 count = atoi(optarg);
@@ -94,11 +103,12 @@ int main(int argc, char** argv) {
         printf("Invalid URL: %s\n", url);
         exit(EXIT_FAILURE);
     }
-
     ch = curl_easy_init();
     curl_easy_setopt(ch, CURLOPT_URL, url);
     curl_easy_setopt(ch, CURLOPT_VERBOSE, verbose);
+    curl_easy_setopt(ch, CURLOPT_FOLLOWLOCATION, 1);
     curl_easy_setopt(ch, CURLOPT_TIMEOUT_MS, DEFAULT_TIMEOUT_MS);
+    curl_easy_setopt(ch, CURLOPT_NOBODY, quiet);
     if (strcmp(xstr(POST), method) == 0) {
         curl_easy_setopt(ch, CURLOPT_POST, 1);
     }
